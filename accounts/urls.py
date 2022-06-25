@@ -1,9 +1,9 @@
 from django.urls import path
 
-from . import views
+from .views import BlacklistTokenUpdateView, CustomUserCreate
 
 app_name = 'accounts'
 
 urlpatterns = [
-    path('accounts/', views.getAccounts)
+       path('create/', CustomUserCreate.as_view(), name="create_user"),
 ]

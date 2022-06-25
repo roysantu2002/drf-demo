@@ -1,0 +1,8 @@
+//Starts Mongdb server @ mongodb://127.0.0.1:27017/
+brew services start mongodb-community@4.2
+
+//Stops Mongdb server @ mongodb://127.0.0.1:27017/
+brew services stop mongodb-community@4.2
+
+//mongo
+mongo - starts the mongo client

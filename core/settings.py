@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'api',
     'accounts',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
 
 ]
 
@@ -81,7 +82,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'testDB2',
+        'NAME': 'testDB3',
         'HOST': '127.0.0.1',
         'PORT': 27017,
         'ENFORCE_SCHEMA': False,
@@ -160,7 +161,7 @@ SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
     'AUTH_HEADER_TYPES': ('JWT',),
-    'USER_ID_FIELD': 'id',
+    'USER_ID_FIELD': 'user_id',
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',

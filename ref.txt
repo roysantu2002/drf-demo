@@ -6,3 +6,6 @@ brew services stop mongodb-community@4.2
 
 //mongo
 mongo - starts the mongo client
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc"  -delete

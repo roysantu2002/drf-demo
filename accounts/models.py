@@ -7,8 +7,8 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
-class SampleModel(Model):
-    pass
+# class SampleModel(Model):
+#     pass
 
 class CustomAccountManager(BaseUserManager):
 
@@ -42,12 +42,12 @@ class CustomAccountManager(BaseUserManager):
 
 class NewUser(AbstractBaseUser, PermissionsMixin):
 
-    user_id = models.AutoField(
+    id = models.BigAutoField(
                 auto_created = True,
                 unique=True,
                 primary_key = True,
                 serialize = False,
-                verbose_name ='ID_nama: ')
+                verbose_name ='id')
     email = models.EmailField(_('email address'), unique=True)
     user_name = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=150, blank=True)

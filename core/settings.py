@@ -4,6 +4,8 @@
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@xmxm*m6i*^)o!(gar5p@kzcly@)yl#d0c^=2xm8^i)$2=^&lj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -90,6 +92,7 @@ DATABASES = {
     }
 }
 
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -131,7 +134,7 @@ REST_FRAMEWORK = {
 # IsAuthenticatedOrReadOnly
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000"
+    'auth-core-app.herokuapp.com', 'localhost'
 ]
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

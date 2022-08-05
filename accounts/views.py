@@ -1,10 +1,14 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import CustomUserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny
+
+
+
+from rest_framework_simplejwt.views import TokenViewBase
+
+from .serializers import CustomUserSerializer, TokenObtainLifetimeSerializer, TokenRefreshLifetimeSerializer, MyTokenObtainPairSerializer
 
 
 class CustomUserCreate(APIView):
@@ -16,8 +20,12 @@ class CustomUserCreate(APIView):
             user = serializer.save()
             if user:
                 json = serializer.data
+                print(json)
                 return Response(json, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # return Response({"status": "email error"})
+
+            return Response({"status": "email error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BlacklistTokenUpdateView(APIView):
@@ -32,3 +40,19 @@ class BlacklistTokenUpdateView(APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class TokenObtainPairView(TokenViewBase):
+    """
+        Return JWT tokens (access and refresh) for specific user based on username and password.
+    """
+
+    serializer_class = TokenObtainLifetimeSerializer
+
+
+class TokenRefreshView(TokenViewBase):
+    """
+        Renew tokens (access and refresh) with new expire time based on specific user's access token.
+    """
+    serializer_class = TokenRefreshLifetimeSerializer

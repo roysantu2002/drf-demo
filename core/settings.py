@@ -6,6 +6,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,13 +18,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@xmxm*m6i*^)o!(gar5p@kzcly@)yl#d0c^=2xm8^i)$2=^&lj'
+print(config('DJANGO_SECRET_KEY'))
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DJANGO_DEBUG', True)
+if DEBUG in ['OFF', 'off', 'No', 'no', 'False', 'false', '0', '']:
+    DEBUG = False
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = [ 'auth-core-app.herokuapp.com', 'localhost']
-
+# ALLOWED_HOSTS = ['auth-core-app.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['auth-core-app.herokuapp.com', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -38,6 +45,8 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'django_extensions',
+    'corsheaders'
 
 
 ]
@@ -51,7 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-     'whitenoise.middleware.WhiteNoiseMiddleware'
+     'whitenoise.middleware.WhiteNoiseMiddleware',
+       'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -86,18 +96,37 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # }
 # mongoengine.connect(db='coreapp', host='127.0.0.1', username=username, password=pwd)
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testone',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'postgres',
-        'PASSWORD': 'test123456'
+if config('DJANGO_DEBUG') == 1:
+    DATABASES = dj_database_url.config(conn_max_age=600, ssl_require=True)
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'testone',
+            'HOST': 'localhost',
+            'PORT': '5432',
+            'USER': 'postgres',
+            'PASSWORD': 'test123456'
+        }
     }
-}
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
+#         },
+#         "KEY_PREFIX": "example"
+#     }
+# }
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+
+# Cache time to live is 15 minutes.
+CACHE_TTL = 60 * 15
+
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -125,6 +154,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
@@ -138,9 +170,7 @@ REST_FRAMEWORK = {
 # IsAdminUser
 # IsAuthenticatedOrReadOnly
 
-CORS_ALLOWED_ORIGINS = [
-    'auth-core-app.herokuapp.com', 'localhost'
-]
+CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:3000', 'http://localhost:8000']
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 

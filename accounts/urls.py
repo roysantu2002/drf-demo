@@ -5,5 +5,5 @@ from .views import BlacklistTokenUpdateView, CustomUserCreate
 app_name = 'accounts'
 
 urlpatterns = [
-       path('create/', CustomUserCreate.as_view(), name="create_user"),
+       path('register/', CustomUserCreate.as_view(), name="create_user"),
 ]

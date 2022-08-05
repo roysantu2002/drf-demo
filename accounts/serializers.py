@@ -1,9 +1,19 @@
 from enum import unique
 
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (TokenObtainPairSerializer,
+                                                  TokenRefreshSerializer)
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from accounts.models import NewUser
 
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+        token['email'] = user.email
+        return token
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
@@ -31,4 +41,25 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if password is not None:
             instance.set_password(password)
         instance.save()
+        # tokens = MyTokenObtainPairSerializer(request.data).validate(request.data)
         return instance
+
+
+class TokenObtainLifetimeSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        access_token = refresh.access_token
+        print(access_token)
+        data['lifetime'] = int(refresh.access_token.lifetime.total_seconds())
+        return data
+
+
+class TokenRefreshLifetimeSerializer(TokenRefreshSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = RefreshToken(attrs['refresh'])
+        data['lifetime'] = int(refresh.access_token.lifetime.total_seconds())
+        return data

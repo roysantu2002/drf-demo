@@ -6,11 +6,11 @@ from django.forms import CharField, Textarea, TextInput
 from djongo import models
 from rest_framework_simplejwt import token_blacklist
 
-from accounts.models import NewUser
+from accounts.models import UserAccountManager
 
 
 class UserAdminConfig(UserAdmin):
-    model = NewUser
+    model = UserAccountManager
 
     search_fields = ('email', 'user_name', 'first_name',)
     list_filter = ('email', 'user_name', 'first_name', 'is_active', 'is_staff')
@@ -40,4 +40,4 @@ class UserAdminConfig(UserAdmin):
 # admin.site.unregister(token_blacklist.models.OutstandingToken)
 # admin.site.register(token_blacklist.models.OutstandingToken, OutstandingTokenAdmin)
 
-admin.site.register(NewUser, UserAdminConfig)
+admin.site.register(UserAccountManager, UserAdminConfig)

@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 # class SampleModel(Model):
 #     pass
 
-class CustomAccountManager(BaseUserManager):
+class UserAccountManager(BaseUserManager):
 
     def create_superuser(self, email, user_name, first_name, password, **other_fields):
 
@@ -40,7 +40,7 @@ class CustomAccountManager(BaseUserManager):
         return user
 
 
-class NewUser(AbstractBaseUser, PermissionsMixin):
+class UserAccount(AbstractBaseUser, PermissionsMixin):
 
     id = models.BigAutoField(
                 auto_created = True,
@@ -57,7 +57,7 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
 
-    objects = CustomAccountManager()
+    objects = UserAccountManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['user_name', 'first_name']

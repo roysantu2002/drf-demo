@@ -3,15 +3,16 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
-
 from rest_framework_simplejwt.views import TokenViewBase
 
-from .serializers import CustomUserSerializer, TokenObtainLifetimeSerializer, TokenRefreshLifetimeSerializer, MyTokenObtainPairSerializer
+from .serializers import (CustomUserSerializer, MyTokenObtainPairSerializer,
+                          TokenObtainLifetimeSerializer,
+                          TokenRefreshLifetimeSerializer)
 
-
-class CustomUserCreate(APIView):
+"""
+    RegisterView
+"""
+class RegisterView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format='json'):
@@ -21,7 +22,7 @@ class CustomUserCreate(APIView):
             if user:
                 json = serializer.data
                 print(json)
-                return Response(json, status=status.HTTP_201_CREATED)
+                return Response({'success': 'Account created'}, status=status.HTTP_201_CREATED)
         else:
             # return Response({"status": "email error"})
 

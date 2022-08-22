@@ -5,7 +5,7 @@ from rest_framework_simplejwt.serializers import (TokenObtainPairSerializer,
                                                   TokenRefreshSerializer)
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from accounts.models import NewUser
+from accounts.models import UserAccount
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -25,12 +25,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         lower_email = value.lower()
-        if NewUser.objects.filter(email__iexact=lower_email).exists():
+        if UserAccount.objects.filter(email__iexact=lower_email).exists():
             raise serializers.ValidationError("Email Already Exists")
         return lower_email
 
     class Meta:
-        model = NewUser
+        model = UserAccount
         fields = ('email', 'user_name', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 

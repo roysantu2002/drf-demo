@@ -18,20 +18,26 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-print(config('DJANGO_SECRET_KEY'))
+# print(config('DJANGO_SECRET_KEY'))
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DJANGO_DEBUG', True)
-if DEBUG in ['OFF', 'off', 'No', 'no', 'False', 'false', '0', '']:
-    DEBUG = False
-else:
-    DEBUG = True
 
+DEBUG = str(os.environ.get('DEBUG')) == "1"
+
+# DEBUG = config('DJANGO_DEBUG', True)
+# if DEBUG in ['OFF', 'off', 'No', 'no', 'False', 'false', '0', '']:
+#     DEBUG = False
+# else:
+#     DEBUG = True
+
+ENV_ALLOWED_HOST = os.environ.get("ENV_ALLOWED_HOST")
 # ALLOWED_HOSTS = ['auth-core-app.herokuapp.com', 'localhost', '127.0.0.1']
-ALLOWED_HOSTS = ['auth-core-app.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = []
 
+if ENV_ALLOWED_HOST:
+    ALLOWED_HOSTS = [ENV_ALLOWED_HOST]
 # Application definition
 
 INSTALLED_APPS = [
@@ -95,20 +101,64 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     }
 # }
 # mongoengine.connect(db='coreapp', host='127.0.0.1', username=username, password=pwd)
+# print(BASE_DIR)
 
-if config('DJANGO_DEBUG') == 1:
-    DATABASES = dj_database_url.config(conn_max_age=600, ssl_require=True)
-else:
-    DATABASES = {
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+DB_USERNAME = os.environ.get('POSTGRES_USER')
+DB_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
+DB_DATABASE = os.environ.get('POSTGRES_DB')
+DB_HOST = os.environ.get('POSTGRES_HOST')
+DB_PORT = os.environ.get('POSTGRES_PORT')
+
+
+DB_IS_AVAIL = all([
+    DB_USERNAME,
+    DB_PASSWORD,
+    DB_DATABASE,
+    DB_HOST,
+    DB_PORT
+])
+
+POSTGRES_READY = str(os.environ.get('POSTGRES_READY')) == '1'
+
+print(os.environ.get('POSTGRES_READY'))
+print(POSTGRES_READY)
+print(DB_IS_AVAIL)
+
+if DB_IS_AVAIL and POSTGRES_READY:
+     print('ready')
+     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'testone',
-            'HOST': 'localhost',
-            'PORT': '5432',
-            'USER': 'postgres',
-            'PASSWORD': 'test123456'
+            'NAME': DB_DATABASE,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'USER': DB_USERNAME,
+            'PASSWORD': DB_PASSWORD
         }
     }
+
+# print(DATABASES)
+
+# if config('DJANGO_DEBUG') == 1:
+#     DATABASES = dj_database_url.config(conn_max_age=600, ssl_require=True)
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'testone',
+#             'HOST': 'localhost',
+#             'PORT': '5432',
+#             'USER': 'postgres',
+#             'PASSWORD': 'test123456'
+#         }
+#     }
 
 CACHES = {
     "default": {
@@ -174,6 +224,7 @@ REST_FRAMEWORK = {
 # IsAuthenticated
 # IsAdminUser
 # IsAuthenticatedOrReadOnly
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:3000', 'http://localhost:8000', 'http://localhost:8081']
 # Internationalization
@@ -216,7 +267,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Custom user model
-AUTH_USER_MODEL = "accounts.UserAccount"
+AUTH_USER_MODEL = "accounts.NewUser"
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),

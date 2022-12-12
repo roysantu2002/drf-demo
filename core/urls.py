@@ -8,8 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     # path('api/', include('api.urls', namespace='api')),
-    path('api/user/', include('accounts.urls')),
-    path('api/user/', include('api.urls')),
+    path('api/account/', include('accounts.urls')),
+    path('api/account/', include('api.urls')),
 
 
 ]

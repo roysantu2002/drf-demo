@@ -16,29 +16,28 @@ class RegisterView(APIView):
     permission_classes = (permissions.AllowAny, )
     # permission_classes = [AllowAny]
 
-    def post(self, request):
+    def post(self, request, format='json'):
         try:
             serializer = CustomUserSerializer(data=request.data)
+            # print(serializer)
             if serializer.is_valid():
+                print(request.data)
                 user = serializer.save()
+
                 if user:
                     # json = serializer.data
+                    print(request.data)
                     return Response({'code' : 'account-created'}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({'error' : 'something-went-wrong-while-saving'},
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                                 )
             else:
-                default_errors = serializer.errors
-                new_error = {}
-                for field_name, field_errors in default_errors.items():
-                    new_error[field_name] = field_errors[0]
-
-                return Response({'error' :new_error}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-
+                print("User exists")
+                return Response({'error' :'email-already-in-use'}, status=status.HTTP_400_BAD_REQUEST)
+        except:
             return Response(
-                {'error' : 'validation error'},
+                {'error' : 'something-went-wrong'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 

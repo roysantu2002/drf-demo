@@ -36,15 +36,15 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 #         redis = redis_instance.Redis.from_url
         # r=redis.StrictRedis(host=settings.REDIS_HOST,port=settings.REDIS_PORT,db=settings.REDIS_DB)
 
-        result = cache.keys("*")
-        print(result)
-        r = get_redis_connection("default")
-        connection_pool = r.connection_pool
-        print("Created connections so far: %d" % connection_pool._created_connections)
-
-
-        for key in r.scan_iter("user:*"):
-            print(f'{key}')
+#         result = cache.keys("*")
+#         print(result)
+#         r = get_redis_connection("default")
+#         connection_pool = r.connection_pool
+#         print("Created connections so far: %d" % connection_pool._created_connections)
+#
+#
+#         for key in r.scan_iter("user:*"):
+#             print(f'{key}')
 
 
         data = super(CustomTokenObtainPairSerializer, self).validate(attrs)
